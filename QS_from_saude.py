@@ -28,7 +28,7 @@ def generate_qs(full):
 
 
 def main():
-    full = transform(sys.stdin)
+    full = transform("./tempcsv/today_covid.csv")
     generate_qs(full)
 
 
