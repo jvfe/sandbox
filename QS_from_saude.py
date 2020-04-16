@@ -3,9 +3,11 @@ import datetime
 from datetime import date, timedelta
 import sys
 
+yesterd = date.today() - timedelta(days=1)
+
 def transform(table):
     nacional = pd.read_csv(table, sep=';')
-    yesterday = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+    yesterday = yesterd.strftime("%Y-%m-%d")
     nacional_hoje = nacional.query("data == @yesterday")
     
     dic = pd.read_csv("./dicionario.csv")
@@ -13,7 +15,7 @@ def transform(table):
     return(full)
 
 def generate_qs(full):
-    yesterday_wdt = (date.today() - timedelta(days=1)).strftime("+%Y-%m-%dT00:00:00Z/11")
+    yesterday_wdt = yesterd.strftime("+%Y-%m-%dT00:00:00Z/11")
     today_wdt = date.today().strftime("+%Y-%m-%dT00:00:00Z/11")
     for index, row in full.iterrows():
         print(
