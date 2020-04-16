@@ -4,6 +4,7 @@ from datetime import date, timedelta
 import sys
 
 yesterd = date.today() - timedelta(days=1)
+today = date.today()
 
 def transform(table):
     nacional = pd.read_csv(table, sep=';')
@@ -16,7 +17,7 @@ def transform(table):
 
 def generate_qs(full):
     yesterday_wdt = yesterd.strftime("+%Y-%m-%dT00:00:00Z/11")
-    today_wdt = date.today().strftime("+%Y-%m-%dT00:00:00Z/11")
+    today_wdt = today.strftime("+%Y-%m-%dT00:00:00Z/11")
     for index, row in full.iterrows():
         print(
       row['item'] + "|P1603|" + str(int(row['casosAcumulados'])) + "|P585|" + yesterday_wdt + "|S854|" + '"' + "https://covid.saude.gov.br/" + '"' +
@@ -28,7 +29,8 @@ def generate_qs(full):
 
 
 def main():
-    full = transform("./tempcsv/today_covid.csv")
+    today_data = f"./BRcsv/{str(today)}.csv"
+    full = transform(today_data)
     generate_qs(full)
 
 
