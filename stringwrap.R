@@ -9,7 +9,7 @@ Possible methods:
 	Functional annotation = functional_annotation
 	Enrich interaction net = ppi_enrichment
 "
-getNet <- function(myApp = "www.awesome_app.org", genes, species, method = "network") {
+stringwRap <- function(myApp = "www.awesome_app.org", genes, species, method = "network") {
   
   genes <- paste(genes, collapse="%0d")
   
