@@ -52,7 +52,7 @@ def finalbow(text):
         elaborate.append({'word': key, 'frequency':value})
     return elaborate
 
-def WordVec(text, word):
+def wordvec(text, word):
     model = gensim.models.Word2Vec(clean(text), min_count=1)
     similars = model.wv.most_similar(word, topn=5)
     similar_words = []

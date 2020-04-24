@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
 from flask_marshmallow import Marshmallow
+from api_functions import finalbow, wordvec
 
 # Init app
 app = Flask(__name__)
@@ -84,9 +85,27 @@ class singleUserOperations(Resource):
     db.session.delete(user)
     db.session.commit()
 
+class BoWGet(Resource):
 
+  def get(self, id):
+    user = User.query.get(id)
+    text = user.content
+    return jsonify(finalbow(text))
+
+class WordVec(Resource):
+
+  def post(self, id):
+    user = User.query.get(id)
+    text = user.content
+    word = request.json['word']
+
+    return jsonify(wordvec(text, word))
+
+api.add_resource(WordVec, '/users/<id>/wordvec')
+api.add_resource(BoWGet, '/users/<id>/getbow')
 api.add_resource(singleUserOperations, '/users/<id>')
 api.add_resource(createandseeDatabase, '/users')
+
 
 if __name__=='__main__':
   app.run(debug=True)
