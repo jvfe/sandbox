@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
 from flask_marshmallow import Marshmallow
-from api_functions import finalbow, wordvec
+from text_functions import finalbow, wordvec
 
 # Init app
 app = Flask(__name__)
@@ -11,8 +11,10 @@ api = Api(app)
 # SQLalchemy setup
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///TextProc.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 # Initialize db
 db = SQLAlchemy(app)
+
 # Init ma
 ma = Marshmallow(app)
 
@@ -30,15 +32,17 @@ class User(db.Model):
     return str(self.content)
 
 # User Schema
+
 class UserSchema(ma.Schema):
   class Meta:
     fields = ('id', 'name', 'content')
 
 # Init schema
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True) 
 
-# The following resource creates and gets the whole db
+# The following resource creates users and gets the whole db
 
 class createandseeDatabase(Resource):
   
@@ -85,6 +89,7 @@ class singleUserOperations(Resource):
     db.session.delete(user)
     db.session.commit()
 
+# Now the following functions execute the text operations
 class BoWGet(Resource):
 
   def get(self, id):
@@ -98,9 +103,12 @@ class WordVec(Resource):
     user = User.query.get(id)
     text = user.content
     word = request.json['word']
+    try:
+      return jsonify(wordvec(text, word))
+    except:
+      return {'error':"The word you requested isn't in the vocabulary!"}
 
-    return jsonify(wordvec(text, word))
-
+# Adding all resources to the api
 api.add_resource(WordVec, '/users/<id>/wordvec')
 api.add_resource(BoWGet, '/users/<id>/getbow')
 api.add_resource(singleUserOperations, '/users/<id>')
@@ -108,4 +116,4 @@ api.add_resource(createandseeDatabase, '/users')
 
 
 if __name__=='__main__':
-  app.run(debug=True)
+  app.run()

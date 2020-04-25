@@ -42,7 +42,7 @@ def clean(text):
 
 def bow(wordlist):
     all_words = sum(wordlist, [])
-    return(nltk.FreqDist(w for w in all_words))
+    return nltk.FreqDist(w for w in all_words)
 
 def finalbow(text):
     text = clean(text)
