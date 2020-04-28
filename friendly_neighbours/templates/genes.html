@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+<div class="content container">
+  <p>Proteins who interact with {{querygene}} also interact with these:</p>
+  <form method="POST">
+    <div class="btn-group container" role="group" aria-label="Basic example">
+  {% for g in genes %}
+      <input class = 'btn btn-primary' role="button" aria-pressed="true" name='g' type="submit" value="{{ g }}">
+  {% endfor %}
+    </div>
+  {%- if pdb -%}
+  <div style = "margin:0 auto;width:300px;" class='container'>
+  <a target="_blank" href="http://www.rcsb.org/structure/{{pdb}}">
+    <div style="height: 400px; width: 300px; position: relative;" class='viewer_3Dmoljs' data-pdb='{{ pdb }}' data-backgroundcolor='0xffffff' data-style1='cartoon:color=spectrum'>
+    </div>
+  </a>
+  </div>
+  {%- endif %}
+  {%- if failure -%}
+  <div style = "margin:0 auto;width:300px;" class='container'>
+    <br>
+    <p>I couldn't find a PDB model for {{failure}}</p>
+    <h1>:C</h1>
+    <p>Try looking for it <a href='http://www.rcsb.org/search?query={"parameters"%3A{"value"%3A"{{failure}}"}}'>here</a></p>
+  </div>
+  {%- endif %} 
+  </form>      
+</div>
+{% endblock %}

@@ -1,6 +1,7 @@
 import requests
-from SPARQLWrapper import SPARQLWrapper, JSON
 from operator import itemgetter
+import pandas as pd
+import re
 
 string_api_url = "https://string-db.org/api"
 output_format = "json"
@@ -40,27 +41,28 @@ def lastreq(gene):
 def sortbyscore(gene):
   genelist = list(lastreq(gene))
   sorts = sorted(genelist, key=itemgetter('score'), reverse=True)
-  return sorts[0:5] 
+  return sorts
 
 def getgenes(genelist):
+    genes = []
     for i in genelist:
-        yield i['preferredName_A']
+        genes.append(i['preferredName_A'])
+    genes = set(genes)
+    return list(genes)
 
 def get_pdb(gene):
-    endpoint_url = "https://query.wikidata.org/sparql"
-    query = "SELECT ?pdbid WHERE {{values ?symbol {} . ?gene wdt:P638 ?pdbid .}} LIMIT 1".format({gene})
+    uniprot = pd.read_table("./data/uniprot_mapping.tsv")
+    reg = gene + "$"
+    df = uniprot[uniprot["g_name"].str.contains(reg,regex=True, na=False)]
+    if df.empty:
+        reg = gene + ";"
+        df = uniprot[uniprot["g_name"].str.contains(reg,regex=True, na=False)]
 
-    def get_results(endpoint_url, query):
-        sparql = SPARQLWrapper(endpoint_url)
-        sparql.setQuery(query)
-        sparql.setReturnFormat(JSON)
-        return sparql.query().convert()
-
-    pdblist = []
-    results = get_results(endpoint_url, query)
-    return results['results']['bindings'][0]['pdbid']['value']
+    st = df['PDB'].to_string(index=False)
+    pdb = re.split(r"\s*[,;]\s*", st.strip())[1]
+    return pdb 
 
 # if __name__=='__main__':
 #   get_pdb(
-#     gene = input('gene:')
+#     gene = 'IRAK3'
 #   )
