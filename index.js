@@ -38,21 +38,21 @@ chart = function chart(data) {
   function nodeYearPos(d) {
     return xCenters[d.ofensiva].x;
   }
-  splitBubbles()
+
   function groupBubbles() {
 
     // @v4 Reset the 'x' force to draw the bubbles to the center.
     simulation.force('x', d3.forceX().strength(0.03).x(center[0]));
-  
+
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart();
   }
-  
+
   function splitBubbles() {
-  
+
     // @v4 Reset the 'x' force to draw the bubbles to their year centers
     simulation.force('x', d3.forceX().strength(0.03).x(nodeYearPos));
-  
+
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart();
   }
@@ -71,7 +71,17 @@ chart = function chart(data) {
   node.transition()
     .duration(3000)
     .attr('r', (d) => radiusScale(d.value));
+
+  button1 = d3.select("#divided")
+    .append('button')
+    .text('bla')
+    .on('click', splitBubbles)
   
+  button2 = d3.select("#all")
+    .append('button')
+    .text('bla')
+    .on('click', groupBubbles)
+
   return chart
 
 }
